@@ -7,11 +7,16 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from starlette import status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from jose import jwt, JWTError
+from datetime import timedelta, datetime, timezone
 
 router = APIRouter(
     prefix="/auth",
     tags=["Authentication"]
 )
+
+SECRET_KEY="eyJhbGciOiJIUzI1NiJ9eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTczODY3MzkyMSwiaWF0IjoxNzM4NjczOTIxfQ.n3R7BuyHynO_G-dr-Z7x9TsazAa_xA2HCL-8dEu_UpA"
+ALGORITHM="HS256"
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -22,6 +27,12 @@ class CreateUserRequest(BaseModel):
     last_name : str
     password: str
     role: str
+
+def create_access_token(username: str, user_id : int, role : str, expires_delta: timedelta):
+    payload = {'sub' : username, 'id': user_id, 'role': role}
+    expires = datetime.now(timezone.utc) + expires_delta
+    payload.update({'exp': expires})
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 def authenticate_user(username:str, password: str, db):
     user = db.query(User).filter(User.username == username).first()
@@ -56,7 +67,7 @@ async def create_user(db: db_dependency, create_user_request : CreateUserRequest
 
 
 @router.post("/token")
-async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],db: db_dependency):
+async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
