@@ -1,8 +1,8 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
-from database import SessionLocal
-from models import User
+from ..database import SessionLocal
+from ..models import User
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from starlette import status
@@ -16,7 +16,7 @@ router = APIRouter(
     tags=["Authentication"]
 )
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="app/templates")
 
 
 SECRET_KEY="eyJhbGciOiJIUzI1NiJ9eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTczODY3MzkyMSwiaWF0IjoxNzM4NjczOTIxfQ.n3R7BuyHynO_G-dr-Z7x9TsazAa_xA2HCL-8dEu_UpA"

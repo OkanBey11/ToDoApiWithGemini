@@ -5,10 +5,10 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
 from starlette import status
 from sqlalchemy.orm import Session
-from models import Todo
-from database import SessionLocal
+from ..models import Todo
+from ..database import SessionLocal
 from typing import Annotated
-from routers.auth import get_current_user
+from ..routers.auth import get_current_user
 from dotenv import load_dotenv
 import google.generativeai as genai
 import os
@@ -22,7 +22,7 @@ router = APIRouter(
     tags=["Todo"]
 )
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="/app/templates")
 
 class TodoRequest(BaseModel):
     title: str = Field(min_length=3, max_length=200)
