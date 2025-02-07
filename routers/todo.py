@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage
 import markdown
 from bs4 import BeautifulSoup
 
